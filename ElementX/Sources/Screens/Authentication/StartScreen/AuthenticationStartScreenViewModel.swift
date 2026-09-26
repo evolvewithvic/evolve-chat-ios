@@ -39,7 +39,8 @@ class AuthenticationStartScreenViewModel: AuthenticationStartScreenViewModelType
         self.userIndicatorController = userIndicatorController
         canReportProblem = isBugReportServiceEnabled
         
-        let isQRCodeScanningSupported = !ProcessInfo.processInfo.isiOSAppOnMac
+        // Evolve Chat: the server has no MSC4108 rendezvous endpoint (404), so QR sign-in could only fail.
+        let isQRCodeScanningSupported = false
         let isClassicAppAccountAllowed = if let classicAppAccount = authenticationService.classicAppAccount {
             appSettings.accountProviders.contains(serverName: classicAppAccount.serverName, orBaseURL: classicAppAccount.homeserverURL)
         } else {

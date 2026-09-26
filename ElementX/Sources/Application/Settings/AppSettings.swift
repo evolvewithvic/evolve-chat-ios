@@ -148,7 +148,7 @@ final nonisolated class AppSettings: @unchecked Sendable {
     /// Whether or not the user is allowed to manually enter their own account provider or must select from one of `defaultAccountProviders`.
     private(set) var allowOtherAccountProviders = false   // Evolve Chat only talks to the Evolve server
     /// Whether the components surrounding the app brand/logo should be hidden or not
-    private(set) var hideBrandChrome = false
+    private(set) var hideBrandChrome = true   // bare Evolve mark; also drops Element's "Be in your element" tagline
     
     /// The task identifier used for background app refresh. Also used in main target's the Info.plist
     let backgroundAppRefreshTaskIdentifier = "ai.evolveestatesgroup.chat.background.refresh"

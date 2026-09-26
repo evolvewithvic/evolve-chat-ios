@@ -39,7 +39,8 @@ jobs:
         run: |
           APP=$(find "$RUNNER_TEMP/dd/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name '*.app' | head -1)
           echo "app: $APP"; /usr/libexec/PlistBuddy -c 'Print CFBundleDisplayName' "$APP/Info.plist"
-          codesign -d --entitlements - --xml "$APP" | plutil -p - | grep -A3 -E 'keychain-access-groups|application-groups'
+          # Simulator builds carry their entitlements in the binary's __TEXT,__entitlements section, not the signature.
+          strings -a "$APP/ElementX" | grep -A3 -E '<key>(keychain-access-groups|com.apple.security.application-groups)</key>' | head -12 || true
           DEV=$(xcrun simctl list devices available | grep -m1 -E 'iPhone 17 \(' | grep -oE '[0-9A-F-]{36}')
           xcrun simctl boot "$DEV"; xcrun simctl bootstatus "$DEV" -b
           xcrun simctl install "$DEV" "$APP"

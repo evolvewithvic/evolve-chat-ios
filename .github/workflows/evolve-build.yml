@@ -25,15 +25,17 @@ jobs:
         run: brew install xcodegen
       - name: Generate project
         run: xcodegen
+      # Derived data must live outside the checkout: the ElementX build phase runs `swiftformat --lint` over the
+      # whole project dir and fails on the downloaded packages (sentry-cocoa, swift-syntax) if they sit inside it.
       - name: Build for the iOS Simulator
         run: |
           set -o pipefail
           xcodebuild -project ElementX.xcodeproj -scheme ElementX -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/dd" \
             CODE_SIGNING_ALLOWED=NO build | tail -40
       - name: Launch and screenshot
         run: |
-          APP=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' | head -1)
+          APP=$(find "$RUNNER_TEMP/dd/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name '*.app' | head -1)
           echo "app: $APP"; /usr/libexec/PlistBuddy -c 'Print CFBundleDisplayName' "$APP/Info.plist"
           DEV=$(xcrun simctl list devices available | grep -m1 -E 'iPhone 17 \(' | grep -oE '[0-9A-F-]{36}')
           xcrun simctl boot "$DEV"; xcrun simctl bootstatus "$DEV" -b

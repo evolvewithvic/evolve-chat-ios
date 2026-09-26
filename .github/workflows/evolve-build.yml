@@ -1,0 +1,49 @@
+# Evolve Chat (rebranded Element X) build: compiles for the iOS Simulator on GitHub's macOS runners, launches the
+# app and captures the first screen, so the heavy build never runs on the production Mac Mini. Element's own CI
+# workflows were removed in this fork; they target Element's infrastructure and secrets.
+name: Evolve Chat build
+
+on:
+  push:
+    branches: [evolve]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  simulator:
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Select Xcode (same as upstream CI)
+        run: sudo xcode-select -s /Applications/Xcode_26.5.0.app && xcodebuild -version
+      - name: Tools
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen
+      - name: Build for the iOS Simulator
+        run: |
+          set -o pipefail
+          xcodebuild -project ElementX.xcodeproj -scheme ElementX -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build | tail -40
+      - name: Launch and screenshot
+        run: |
+          APP=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' | head -1)
+          echo "app: $APP"; /usr/libexec/PlistBuddy -c 'Print CFBundleDisplayName' "$APP/Info.plist"
+          DEV=$(xcrun simctl list devices available | grep -m1 -E 'iPhone 17 \(' | grep -oE '[0-9A-F-]{36}')
+          xcrun simctl boot "$DEV"; xcrun simctl bootstatus "$DEV" -b
+          xcrun simctl install "$DEV" "$APP"
+          BID=$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$APP/Info.plist")
+          xcrun simctl launch "$DEV" "$BID"; sleep 25
+          mkdir -p shots; xcrun simctl io "$DEV" screenshot shots/01-launch.png
+          xcrun simctl ui "$DEV" appearance dark; sleep 5; xcrun simctl io "$DEV" screenshot shots/02-launch-dark.png
+          cp -R "$APP" shots/ && (cd shots && zip -qr EvolveChat-simulator.app.zip "$(basename "$APP")" && rm -rf "$(basename "$APP")")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evolve-chat-simulator
+          path: shots/

@@ -27,6 +27,21 @@ final class AuthenticationStartScreenViewModelTests {
     
     init() {
         appSettings = AppSettings.volatile()
+        appSettings.useElementStockAccountProviders()
+    }
+    
+    @Test
+    func evolveChatStartScreen() async throws {
+        // Given Evolve Chat's shipped settings (not Element's stock ones).
+        appSettings = AppSettings.volatile()
+        await setupViewModel()
+        
+        // Then the only way in is the Evolve server: no QR sign-in (the server has no MSC4108 endpoint), no account
+        // creation (admins create accounts) and no Element brand chrome.
+        #expect(context.viewState.serverNameOrBaseURL == "chat.evolveestatesgroup.ai")
+        #expect(!context.viewState.showQRCodeLoginButton)
+        #expect(!context.viewState.showCreateAccountButton)
+        #expect(context.viewState.hideBrandChrome)
     }
     
     @Test

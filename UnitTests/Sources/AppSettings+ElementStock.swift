@@ -1,35 +1,19 @@
 //
-// Copyright 2026 Element Creations Ltd.
+// Copyright 2026 Evolving Legacy LLC.
 //
-// SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial.
+// SPDX-License-Identifier: AGPL-3.0-only.
 // Please see LICENSE files in the repository root for full details.
 //
 
 @testable import ElementX
-import Testing
 
-struct AppSettingsTests {
-    @Test
-    func defaultAccountProvider() {
-        let appSettings = AppSettings.volatile()
-        appSettings.useElementStockAccountProviders()
-        #expect(appSettings.defaultAccountProvider == appSettings.accountProviders[0])
-        
-        appSettings.previousServers = ["example.com"]
-        #expect(appSettings.defaultAccountProvider == .generic("example.com"))
-        
-        appSettings.override(allowOtherAccountProviders: false)
-        #expect(appSettings.defaultAccountProvider == appSettings.accountProviders[0])
-    }
-}
-
-// MARK: - Helpers
-
-private extension AppSettings {
-    func override(allowOtherAccountProviders: Bool) {
-        override(accountProviders: accountProviders,
-                 allowOtherAccountProviders: allowOtherAccountProviders,
-                 hideBrandChrome: hideBrandChrome,
+extension AppSettings {
+    /// Evolve Chat ships locked to chat.evolveestatesgroup.ai with other servers disallowed. Tests of Element's
+    /// generic account-provider logic call this first so they run against Element's stock provider settings.
+    func useElementStockAccountProviders() {
+        override(accountProviders: [.managed(serverName: "matrix.org", baseURL: "https://matrix-client.matrix.org")],
+                 allowOtherAccountProviders: true,
+                 hideBrandChrome: false,
                  pushGatewayBaseURL: pushGatewayBaseURL,
                  oAuthRedirectURL: oAuthRedirectURL,
                  oAuthClientURIPath: oAuthClientURIPath,

@@ -4,6 +4,6 @@ nonisolated enum Secrets {
     static let postHogHost: String? = nil
     static let postHogAPIKey: String? = nil
     static let rageshakeURL: String? = nil
-    static let mapLibreAPIKey: String? = "your_key"
+    static let mapLibreAPIKey: String? = nil   // no MapTiler key: location sharing stays hidden (MapTilerConfiguration.isEnabled)
 
 }

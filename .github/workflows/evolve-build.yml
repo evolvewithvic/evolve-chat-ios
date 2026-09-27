@@ -14,11 +14,13 @@ permissions:
 jobs:
   simulator:
     runs-on: macos-26
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
+      - name: Evolve brand guard (seconds; before the long build)
+        run: bash Tools/Scripts/evolve-brand-guard.sh
       - name: Select Xcode (same as upstream CI)
         run: sudo xcode-select -s /Applications/Xcode_26.5.0.app && xcodebuild -version
       - name: Tools
@@ -49,7 +51,24 @@ jobs:
           mkdir -p shots; xcrun simctl io "$DEV" screenshot shots/01-launch.png
           xcrun simctl ui "$DEV" appearance dark; sleep 5; xcrun simctl io "$DEV" screenshot shots/02-launch-dark.png
           cp -R "$APP" shots/ && (cd shots && zip -qr EvolveChat-simulator.app.zip "$(basename "$APP")" && rm -rf "$(basename "$APP")")
+      # Only the suites that cover what this fork changes (settings, start screen, home banners, encryption
+      # switches); Element's full suite runs upstream.
+      - name: Unit tests for the fork's changes
+        run: |
+          set +e
+          xcodebuild test -project ElementX.xcodeproj -scheme UnitTests \
+            -destination 'platform=iOS Simulator,name=iPhone 17' -derivedDataPath "$RUNNER_TEMP/dd" \
+            -only-testing:UnitTests/AppSettingsTests \
+            -only-testing:UnitTests/AuthenticationStartScreenViewModelTests \
+            -only-testing:UnitTests/HomeScreenViewModelTests \
+            -only-testing:UnitTests/SecurityAndPrivacyScreenViewModelTests \
+            CODE_SIGN_IDENTITY=- > "$RUNNER_TEMP/unit-tests.log" 2>&1
+          status=$?
+          grep -E 'Test (Suite|Case|run)|✔|✘|passed|failed|error:|\*\* TEST' "$RUNNER_TEMP/unit-tests.log" | tail -80
+          [ "$status" -eq 0 ] || tail -40 "$RUNNER_TEMP/unit-tests.log"
+          exit "$status"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: evolve-chat-simulator
           path: shots/

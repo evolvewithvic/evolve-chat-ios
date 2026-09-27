@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Personalizado";
 "screen_notification_settings_sound_custom_sound_button_title" = "Sonido personalizado…";
 "screen_notification_settings_sound_delete_sound_error_title" = "Error al eliminar el archivo";
-"screen_notification_settings_sound_element_default" = "Predeterminado de Element";
-"screen_notification_settings_sound_element_fade" = "Desvanecimiento de Element";
+"screen_notification_settings_sound_element_default" = "Predeterminado";
+"screen_notification_settings_sound_element_fade" = "Desvanecimiento";
 "screen_notification_settings_sound_import_sound_error_title" = "Error al importar el archivo";
 "screen_notification_settings_sound_preview_sound_error_title" = "Problema al previsualizar el sonido de alerta";
 "screen_notification_settings_sound_section_title" = "Sonido";
@@ -1138,7 +1138,7 @@
 "screen_onboarding_welcome_back" = "¡Hola de nuevo!";
 "screen_onboarding_welcome_message" = "Bienvenido al %1$@ más rápido de todos los tiempos. Diseñado para la velocidad y la simplicidad.";
 "screen_onboarding_welcome_subtitle" = "Bienvenido a %1$@. Vitaminado, para mayor rapidez y sencillez.";
-"screen_onboarding_welcome_title" = "Siéntete en tu Elemento";
+"screen_onboarding_welcome_title" = "Evolve Chat";
 "screen_pinned_timeline_empty_state_description" = "Presiona sobre un mensaje y selecciona «%1$@» para incluirlo aquí.";
 "screen_pinned_timeline_empty_state_headline" = "Fija los mensajes importantes para que se puedan descubrir fácilmente";
 "screen_pinned_timeline_screen_title_empty" = "Mensajes fijados";
@@ -1414,7 +1414,7 @@
 "screen_room_timeline_add_reaction" = "Añadir emoji";
 "screen_room_timeline_beginning_of_room" = "Este es el principio de %1$@.";
 "screen_room_timeline_beginning_of_room_no_name" = "Este es el principio de esta conversación.";
-"screen_room_timeline_legacy_call" = "Llamada no compatible. Pregunta a la persona que llama si puede utilizar la nueva aplicación Element X.";
+"screen_room_timeline_legacy_call" = "Llamada no compatible. Pregunta a la persona que llama si puede utilizar la nueva aplicación Evolve Chat.";
 "screen_room_timeline_less_reactions" = "Mostrar menos";
 "screen_room_timeline_message_copied" = "Mensaje copiado";
 "screen_room_timeline_no_permission_to_post" = "No tienes permiso para publicar en esta sala";

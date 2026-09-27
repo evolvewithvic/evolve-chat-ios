@@ -164,15 +164,15 @@ final nonisolated class AppSettings: @unchecked Sendable {
     /// A URL that contains the app's Privacy Policy.
     private(set) var privacyURL: URL = "https://chat.evolveestatesgroup.ai/start"
     /// A URL where users can go read more about encryption in general.
-    private(set) var encryptionURL: URL = "https://element.io/help#encryption"
+    private(set) var encryptionURL: URL = "https://chat.evolveestatesgroup.ai/start"
     /// A URL where users can go read more about device verification..
-    private(set) var deviceVerificationURL: URL = "https://element.io/help#encryption-device-verification"
+    private(set) var deviceVerificationURL: URL = "https://chat.evolveestatesgroup.ai/start"
     /// A URL where users can go read more about the chat backup.
-    private(set) var chatBackupDetailsURL: URL = "https://element.io/help#encryption5"
+    private(set) var chatBackupDetailsURL: URL = "https://chat.evolveestatesgroup.ai/start"
     /// A URL where users can go read more about identity pinning violations
-    private(set) var identityPinningViolationDetailsURL: URL = "https://element.io/help#encryption18"
+    private(set) var identityPinningViolationDetailsURL: URL = "https://chat.evolveestatesgroup.ai/start"
     /// A URL describing how history sharing works
-    private(set) var historySharingDetailsURL: URL = "https://element.io/en/help#e2ee-history-sharing"
+    private(set) var historySharingDetailsURL: URL = "https://chat.evolveestatesgroup.ai/start"
     
     /// Any domains that Element web may be hosted on - used for handling links.
     private(set) var elementWebHosts = ["chat.evolveestatesgroup.ai"]

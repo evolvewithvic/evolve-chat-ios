@@ -197,6 +197,7 @@ final class HomeScreenViewModelTests {
     @Test
     func setUpRecoveryBannerState() async throws {
         // Given a view model without a visible security banner.
+        appSettings.forceDisableE2EE.applyRemoteValue(false)   // Element's behaviour, where rooms can be encrypted
         let securityStateStateSubject = CurrentValueSubject<SessionSecurityState, Never>(.init(verificationState: .verified, recoveryState: .unknown))
         setupViewModel(securityStatePublisher: securityStateStateSubject.asCurrentValuePublisher())
         #expect(context.viewState.securityBannerMode == .none)
@@ -219,6 +220,7 @@ final class HomeScreenViewModelTests {
     @Test
     func dismissSetUpRecoveryBannerState() async throws {
         // Given a view model with the setup recovery banner shown.
+        appSettings.forceDisableE2EE.applyRemoteValue(false)   // Element's behaviour, where rooms can be encrypted
         let securityStateStateSubject = CurrentValueSubject<SessionSecurityState, Never>(.init(verificationState: .verified, recoveryState: .unknown))
         setupViewModel(securityStatePublisher: securityStateStateSubject.asCurrentValuePublisher())
         var deferred = deferFulfillment(context.$viewState) { $0.securityBannerMode == .show(.setUpRecovery) }
@@ -239,8 +241,25 @@ final class HomeScreenViewModelTests {
     }
     
     @Test
+    func noRecoveryBannerWhenEncryptionIsForcedOff() async throws {
+        // Given Evolve Chat's setting that no room is end-to-end encrypted (D-05).
+        appSettings.forceDisableE2EE.applyRemoteValue(true)
+        let securityStateStateSubject = CurrentValueSubject<SessionSecurityState, Never>(.init(verificationState: .verified, recoveryState: .unknown))
+        setupViewModel(securityStatePublisher: securityStateStateSubject.asCurrentValuePublisher())
+        
+        // When recovery comes through as disabled or out of sync.
+        let failure = deferFailure(context.$viewState, timeout: .seconds(1)) { $0.securityBannerMode != .none }
+        securityStateStateSubject.send(.init(verificationState: .verified, recoveryState: .disabled))
+        securityStateStateSubject.send(.init(verificationState: .verified, recoveryState: .incomplete))
+        
+        // Then no recovery banner is ever shown.
+        try await failure.fulfill()
+    }
+    
+    @Test
     func outOfSyncRecoveryBannerState() async throws {
         // Given a view model without a visible security banner.
+        appSettings.forceDisableE2EE.applyRemoteValue(false)   // Element's behaviour, where rooms can be encrypted
         let securityStateStateSubject = CurrentValueSubject<SessionSecurityState, Never>(.init(verificationState: .verified, recoveryState: .unknown))
         setupViewModel(securityStatePublisher: securityStateStateSubject.asCurrentValuePublisher())
         #expect(context.viewState.securityBannerMode == .none)

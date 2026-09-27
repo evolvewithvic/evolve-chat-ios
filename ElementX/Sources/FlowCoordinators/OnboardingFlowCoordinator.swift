@@ -128,8 +128,11 @@ class OnboardingFlowCoordinator: FlowCoordinatorProtocol {
     // MARK: - Private
     
     private var requiresVerification: Bool {
+        // Evolve Chat: no room is end-to-end encrypted (D-05), so confirming a device identity protects nothing and
+        // would stop staff on a second device until they find a recovery key.
+        guard !appSettings.forceDisableE2EE.publisher.value else { return false }
         // We want to make sure onboarding finishes but also every time the user becomes unverified (e.g. account reset)
-        !appSettings.hasRunIdentityConfirmationOnboarding || userSession.sessionSecurityStatePublisher.value.verificationState == .unverified
+        return !appSettings.hasRunIdentityConfirmationOnboarding || userSession.sessionSecurityStatePublisher.value.verificationState == .unverified
     }
     
     private var requiresAppLockSetup: Bool {

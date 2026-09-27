@@ -66,6 +66,12 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             .sink { [weak self] securityState in
                 guard let self else { return }
                 
+                // Evolve Chat: key recovery only matters for encrypted rooms, and there are none (D-05).
+                guard !appSettings.forceDisableE2EE.publisher.value else {
+                    state.securityBannerMode = .none
+                    return
+                }
+                
                 switch securityState.recoveryState {
                 case .disabled:
                     if !state.securityBannerMode.isDismissed {
